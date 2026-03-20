@@ -37,7 +37,7 @@ struct OnNewCarLoadedEvent {
 	CarAvatar *car;
 };
 
-enum eReplayStatus {
+enum class eReplayStatus {
 	eReplayPlay = 0x0,
 	eReplayPause = 0x1,
 	eReplayStop = 0x2,
@@ -71,7 +71,7 @@ public:
 	unsigned int colliderCategory;
 };
 
-enum SessionType {
+enum class SessionType {
 	Undefined = 0x0,
 	Pratice = 0x1,
 	Qualify = 0x2,

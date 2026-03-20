@@ -38,4 +38,5 @@ static_assert(sizeof(plane4f) == 0x10);
 #include "types/Game.h"
 #include "types/Sim.h"
 #include "types/CarAvatar.h"
+#include "types/Car.h"
 #include "types/ACPlugin.h"

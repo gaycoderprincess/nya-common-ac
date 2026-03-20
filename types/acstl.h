@@ -1,4 +1,9 @@
 namespace ACSTD {
+	class ofstream {
+	public:
+		uint8_t _0[0x108];
+	};
+
 	template<typename T, typename T2>
 	class map {
 	public:
@@ -23,6 +28,14 @@ namespace ACSTD {
 		unsigned __int64 _Mysize;
 		unsigned __int64 _Myres;
 
+		auto c_str() {
+			if (_Myres < 16) {
+				return _Bx._Buf;
+			}
+			else {
+				return _Bx._Ptr;
+			}
+		}
 		auto assign(const char* _Ptr, uint64_t _Count) { auto f = (string*(__fastcall*)(string*, const char*, uint64_t))(NyaHookLib::mEXEBase + 0x1CF80); return f(this, _Ptr, _Count); }
 	};
 	static_assert(sizeof(string) == 0x20);
@@ -39,6 +52,14 @@ namespace ACSTD {
 		unsigned __int64 _Mysize;
 		unsigned __int64 _Myres;
 
+		auto c_str() {
+			if (_Myres < 8) {
+				return _Bx._Buf;
+			}
+			else {
+				return _Bx._Ptr;
+			}
+		}
 		auto assign(const wchar_t* _Ptr, uint64_t _Count) { auto f = (wstring*(__fastcall*)(wstring*, const wchar_t*, uint64_t))(NyaHookLib::mEXEBase + 0x1D250); return f(this, _Ptr, _Count); }
 	};
 	static_assert(sizeof(wstring) == 0x20);

@@ -94,7 +94,7 @@ public:
 	bool isHot;
 };
 
-enum CarSetupState {
+enum class CarSetupState {
 	UnKnown = 0x0,
 	Legal = 0x1,
 	Illegal = 0x2,

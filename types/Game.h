@@ -15,7 +15,7 @@ public:
 	std::vector<void*> handlers; // todo?
 };
 
-enum JoypadButton {
+enum class JoypadButton {
 	None = 0x0,
 	Left = 0x1,
 	Right = 0x2,
