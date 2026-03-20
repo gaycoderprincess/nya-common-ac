@@ -1,4 +1,3 @@
-class ICarControlsProvider;
 class ITyreModel;
 class IRayCaster;
 class ISuspension;
@@ -7,6 +6,63 @@ class IJoint;
 class ISuspension;
 class PhysicsEngine;
 class ISphereCollisionCallback;
+class CarControls;
+class CarControlsInput;
+class VibrationDef;
+
+enum class DriverActions {
+	eLookingLeft = 0x0,
+	eLookingRight = 0x1,
+	eDeprecated_2 = 0x2,
+	eDeprecated_1 = 0x3,
+	eHeadlightsSwitch = 0x4,
+	eChangingCamera = 0x5,
+	eHorn = 0x6,
+	eShiftingUp = 0x7,
+	eShiftingDown = 0x8,
+	eLookingBack = 0x9,
+	eHeadlightsFlash = 0xA,
+	eTcUp = 0xB,
+	eTcDown = 0xC,
+	eAbsUp = 0xD,
+	eAbsDown = 0xE,
+	eTurboUp = 0xF,
+	eTurboDown = 0x10,
+	eBrakeBiasUp = 0x11,
+	eBrakeBiasDown = 0x12,
+	eDRS = 0x13,
+	eKERS = 0x14,
+	eEngineBrakeUp = 0x15,
+	eEngineBrakeDown = 0x16,
+	eMGUKDeliveryUp = 0x17,
+	eMGUKDeliveryDown = 0x18,
+	eMGUKRecoveryUp = 0x19,
+	eMGUKRecoveryDown = 0x1A,
+	eMGUHMode = 0x1B,
+};
+
+class ICarControlsProvider {
+public:
+	bool ffEnabled;
+	float ffFilter;
+	bool suppressPenalties;
+	bool isAutoclutchNeeded;
+	bool useFakeUndersteerFF;
+	bool keyboardEnabled;
+
+	virtual void _dtor();
+	virtual void acquireControls(CarControls *, float, CarControlsInput *);
+	virtual bool getAction(DriverActions);
+	virtual void sendFF(float, float, float);
+	virtual const char *getName();
+	virtual float getFFGlobalGain();
+	virtual bool isDeviceConnected();
+	virtual void onAutoShifterChanged(bool);
+	virtual bool IsKeyboardControl();
+	virtual void setVibrations(const VibrationDef *);
+	virtual void setEngineRPM(float, float, float);
+	virtual bool shouldDelete();
+};
 
 class IRigidBody {
 public:
@@ -30,7 +86,7 @@ public:
 	virtual void setAngularVelocity(const vec3f *);
 	virtual void setPosition(const vec3f *);
 	virtual void setRotation(const mat44f *);
-	virtual vec3f *getPosition(vec3f *result, float);
+	virtual vec3f *getPosition(vec3f *result, float interpolationT);
 	virtual vec3f *getAngularVelocity(vec3f *result);
 	virtual vec3f *getLocalAngularVelocity(vec3f *result);
 	virtual vec3f *getLocalVelocity(vec3f *result);
@@ -86,6 +142,7 @@ public:
 };
 
 class CarControls {
+public:
 	bool gearUp;
 	bool gearDn;
 	bool drs;
@@ -150,6 +207,8 @@ public:
 	bool extInvalid;
 	OpenTrackTimeState openTrackState;
 	bool isOpenTrack;
+
+	auto step(float dt) { auto f = (void(__fastcall*)(TimeTransponder*, float))(NyaHookLib::mEXEBase + 0x2911F0); return f(this, dt); }
 };
 
 class CarCollisionBox {
@@ -340,6 +399,7 @@ public:
 
 class PhysicsEngine;
 class Engine {
+public:
 	acEngineData data;
 	EngineStatus status;
 	float coastTorqueMultiplier;
@@ -1135,6 +1195,8 @@ public:
 	double lastRecordedDistance;
 	double currentDiff;
 	float currentSpeedDiffMS;
+
+	auto step(float dt) { auto f = (void(__fastcall*)(PerformanceMeter*, float))(NyaHookLib::mEXEBase + 0x26B8E0); return f(this, dt); }
 };
 
 class SetupItem {
@@ -1271,6 +1333,8 @@ public:
 	int currentTyresOut;
 	bool isInPenaltyZone;
 	float lastBlackFlagTime;
+
+	auto step(float dt) { auto f = (void(__fastcall*)(LapInvalidator*, float))(NyaHookLib::mEXEBase + 0x2C0580); return f(this, dt); }
 };
 
 enum class PenaltyDescription {
@@ -1306,6 +1370,8 @@ public:
 	ACSTD::vector<PenaltyRecord> penaltyRecords;
 	unsigned int penaltySecs;
 	float inPitMeterCounter;
+
+	auto step(float dt) { auto f = (void(__fastcall*)(PenaltyManager*, float))(NyaHookLib::mEXEBase + 0x265E10); return f(this, dt); }
 };
 
 class SplineLocatorData {
@@ -1331,6 +1397,8 @@ public:
 	double startFuel;
 	double oldFuelPerLap;
 	bool ignoreLap;
+
+	auto step(float dt) { auto f = (void(__fastcall*)(FuelLapEvaluator*, float))(NyaHookLib::mEXEBase + 0x28D360); return f(this, dt); }
 };
 
 class HeaveSpringStatus {
@@ -1465,6 +1533,112 @@ public:
 	vec3f baseCarSteerPosition;
 	float steerAngle;
 	SusDamageDef damageData;
+};
+
+class MLBall {
+public:
+	vec3f relToTyre;
+	vec3f relToCar;
+};
+
+class MLJoint {
+public:
+	MLBall ballCar;
+	MLBall ballTyre;
+	IJoint *joint;
+};
+
+class SuspensionML : public ISuspension {
+public:
+	IRigidBody *hub;
+	SuspensionStatus status;
+	Damper damper;
+	Car *car;
+	int index;
+	std::vector<MLJoint> joints;
+	float hubMass;
+	vec3f basePosition;
+	float steerTorque;
+	SusDamageDef damageData;
+	vec3f baseCarSteerPosition;
+};
+
+class AxleBall {
+public:
+	vec3f relToAxle;
+	vec3f relToCar;
+	IJoint *joint;
+};
+
+class AxleJoint {
+public:
+	AxleBall ballCar;
+	AxleBall ballAxle;
+};
+
+typedef JoypadButton RigidAxleSide;
+class SuspensionAxle : public ISuspension {
+public:
+	RigidAxleSide side;
+	Damper damper;
+	Car *car;
+	IRigidBody *axle;
+	SuspensionStatus status;
+	vec3f axleBasePos;
+	float track;
+	float referenceY;
+	std::vector<AxleJoint> joints;
+	vec3f leafSpringK;
+	float attachRelativePos;
+};
+
+class SStrutSuspensionData {
+public:
+	vec3f carStrut;
+	vec3f tyreStrut;
+	vec3f carBottomWB_F;
+	vec3f carBottomWB_R;
+	vec3f tyreBottomWB;
+	vec3f carSteer;
+	vec3f tyreSteer;
+	vec3f refPoint;
+	float hubMass;
+	vec3f hubInertiaBox;
+};
+
+class SusStrutDamageDef {
+public:
+	float damageAmount;
+	float damageDirection;
+	float minVelocity;
+	float damageGain;
+	float maxDamage;
+	bool isDebug;
+	float lastAmount;
+};
+
+class SuspensionStrut : public ISuspension {
+public:
+	IRigidBody *carBody;
+	IRigidBody *hub;
+	vec3f basePosition;
+	IJoint *joints[5];
+	IJoint *bumpStopJoint;
+	SStrutSuspensionData dataRelToWheel;
+	SStrutSuspensionData dataRelToBody;
+	Damper damper;
+	SuspensionStatus status;
+	int index;
+	PhysicsEngine *physicsEngine;
+	float steerLinkBaseLength;
+	float steerTorque;
+	vec3f baseCarSteerPosition;
+	float steerAngle;
+	float strutBaseLength;
+	IRigidBody *strutBody;
+	float strutBodyLength;
+	SusStrutDamageDef damageData;
+	Car *car;
 };
 
 class HeaveSpring {
@@ -1697,5 +1871,7 @@ public:
 	bool externalControl;
 
 	virtual void _dtor();
+
+	auto pollControls(float dt) { auto f = (void(__fastcall*)(Car*, float))(NyaHookLib::mEXEBase + 0x274E70); return f(this, dt); }
 };
 static_assert(sizeof(Car) == 0x3EA0);

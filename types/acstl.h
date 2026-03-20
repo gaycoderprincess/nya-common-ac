@@ -77,8 +77,30 @@ namespace ACSTD {
 		T *_Myfirst;
 		T *_Mylast;
 		T *_Myend;
+
+		T& operator[](int i) { return _Myfirst[i]; }
+
+		auto begin() {
+			return _Myfirst;
+		}
+		auto size() {
+			return _Mylast - _Myfirst;
+		}
+		auto capacity() {
+			return _Myend - _Myfirst;
+		}
+		auto empty() {
+			return size() == 0;
+		}
+		auto indexof(T* pos) {
+			return pos - _Myfirst;
+		}
+		T& get(uint32_t i) {
+			if (size() < i) return _Myfirst[i];
+			__debugbreak();
+		}
 	};
-	static_assert(sizeof(vector<void>) == 0x18);
+	static_assert(sizeof(vector<void*>) == 0x18);
 
 	template<typename T1, typename T2>
 	class pair {

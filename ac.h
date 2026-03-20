@@ -6,26 +6,9 @@ public:
 	float y;
 };
 
-class vec3f : public NyaVec3 {
-public:
-	using NyaVec3::NyaVec3;
-
-	vec3f(const NyaVec3& v) : NyaVec3(v) {}
-};
-
-class vec4f : public NyaVec4 {
-public:
-	using NyaVec4::NyaVec4;
-
-	vec4f(const NyaVec4& v) : NyaVec4(v) {}
-};
-
-class mat44f : public NyaMat4x4 {
-public:
-	using NyaMat4x4::NyaMat4x4;
-
-	mat44f(const NyaMat4x4& m) : NyaMat4x4(m) {}
-};
+typedef NyaVec3 vec3f;
+typedef NyaVec4 vec4f;
+typedef NyaMat4x4 mat44f;
 
 class plane4f {
 public:
@@ -40,3 +23,49 @@ static_assert(sizeof(plane4f) == 0x10);
 #include "types/CarAvatar.h"
 #include "types/Car.h"
 #include "types/ACPlugin.h"
+
+class RayCastResult {
+public:
+	SurfaceDef *surfaceDef;
+	vec3f pos;
+	vec3f normal;
+	bool hasHit;
+	void *collisionObject;
+};
+
+class ICollisionObject;
+class RayCastHit {
+public:
+	vec3f pos;
+	vec3f normal;
+	ICollisionObject *collisionObject;
+	bool hasContact;
+};
+
+class Track {
+public:
+	bool rayCast(const vec3f *org, const vec3f *dir, RayCastResult *result, float length) {
+		auto f = (bool(__fastcall*)(Track*, const vec3f *org, const vec3f *dir, RayCastResult *result, float length))(NyaHookLib::mEXEBase + 0x278BB0);
+		return f(this, org, dir, result, length);
+	}
+};
+
+class dxWorld {
+public:
+	void dWorldSetGravity(float x, float y, float z) {
+		auto f = (void(__fastcall*)(dxWorld*, float, float, float))(NyaHookLib::mEXEBase + 0x3404A0);
+		return f(this, x, y, z);
+	}
+};
+
+class PhysicsCore {
+public:
+	uint8_t _0[0x8];
+	dxWorld* id;
+};
+
+class PhysicsEngine {
+public:
+	uint8_t _0[0x190];
+	PhysicsCore* core;
+};
