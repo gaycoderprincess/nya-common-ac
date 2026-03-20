@@ -131,6 +131,32 @@ public:
 };
 static_assert(sizeof(GameTime) == 0x38);
 
+
+class VideoSettings {
+public:
+	int aaSamples;
+	int width;
+	int height;
+	void *hWnd;
+	bool isFullscreen;
+	bool vSync;
+	int anisotropic;
+	int aaQuality;
+	int shadowMapSize;
+	double fpsCapMS;
+	int dxgiModeIndex;
+	int worldDetail;
+	bool ppHDREnabled;
+	bool ppHeatShimmer;
+	bool ppFXAA;
+	bool ppRaysOfGod;
+	int ppQuality;
+	int ppGlare;
+	int ppDof;
+	bool tripleBuffer;
+	float refresh;
+};
+
 class Game {
 public:
 	bool isRenderingGui;
@@ -158,6 +184,8 @@ public:
 
 	virtual void _dtor();
 	virtual void shutdown();
+
+	auto ctor(ACSTD::wstring *name, VideoSettings *videoSettings) { auto f = (void(__fastcall*)(Game*, ACSTD::wstring*, VideoSettings*))(NyaHookLib::mEXEBase + 0x241880); return f(this, name, videoSettings); }
 };
 static_assert(sizeof(Game) == 0x278);
 static_assert(offsetof(Game, gameTime) == 0x10);
