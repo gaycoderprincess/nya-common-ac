@@ -1,4 +1,15 @@
 namespace ACSTD {
+	template<typename T>
+	class atomic {
+	public:
+		T value;
+	};
+
+	class thread {
+	public:
+		uint8_t _0[0x10];
+	};
+
 	class ofstream {
 	public:
 		uint8_t _0[0x108];
