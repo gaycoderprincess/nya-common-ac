@@ -169,6 +169,7 @@ public:
 	std::unique_ptr<ThreadPool> pool;
 	DynamicTempData dynamicTemp;
 
+	auto step(float dt, double currentTime, double gt) { auto f = (void(__fastcall*)(PhysicsEngine*, float, double, double))(NyaHookLib::mEXEBase + 0x264760); return f(this, dt, currentTime, gt); }
 	auto hasSessionStarted(float lag) { auto f = (bool(__fastcall*)(PhysicsEngine*, float))(NyaHookLib::mEXEBase + 0x263C70); return f(this, lag); }
 };
 
