@@ -64,6 +64,76 @@ public:
 	virtual bool shouldDelete();
 };
 
+class RaceEngineer {
+public:
+	Car *car;
+	float fuelPerLapEvaluated;
+
+	virtual void _dtor();
+};
+
+class AISplineRecorder;
+class KeyboardCarControl : public ICarControlsProvider {
+public:
+	float minSteering;
+	float steerSpeed;
+	float steerOppositeDirectionFactor;
+	float steerGain;
+	float steerResetFactor;
+	float lookAhead;
+	float targetSpeed;
+	float steerDecelerator;
+	float speedDeceleringFactor;
+	float turnDeceleringFactor;
+	float intGas;
+	float intSteer;
+	RaceEngineer eng;
+	float gasPedalSpeed;
+	float understeerSteerCorrection;
+	int currentSplinePos;
+	float oldSteer;
+	bool validated;
+	bool mouseSteering;
+	bool mouseAcceleratorBrake;
+	float oldMouseValue;
+	float mouseSpeed;
+	HWND__ *activeWindow;
+	tagPOINT mouseCoordinates;
+	int keyGas;
+	int keyRight;
+	int keyLeft;
+	int keyBrake;
+	int keyGearUp;
+	int keyGearDown;
+	int keyGlanceLeft;
+	int keyGlanceRight;
+	int keyGlanceBack;
+	int keyTurnOnHeadlights;
+	int keyFlashHeadlights;
+	int keyHorn;
+	int keyHandbrake;
+	int keyBrakeBalanceUp;
+	int keyBrakeBalanceDn;
+	int keyChangeCamera;
+	int keyAbsUp;
+	int keyAbsDn;
+	int keyTcUp;
+	int keyTcDn;
+	int keyTurboUp;
+	int keyTurboDn;
+	int keyKers;
+	int keyDrs;
+	int keyEngineBrakeUp;
+	int keyEngineBrakeDn;
+	int keyMGUKDeliveryUp;
+	int keyMGUKDeliveryDn;
+	int keyMGUKRecoveryUp;
+	int keyMGUKRecoveryDn;
+	int keyMGUHMode;
+	AISplineRecorder *aiSpline;
+	Car *car;
+};
+
 class IRigidBody {
 public:
 	virtual void setMassExplicitInertia(float, float, float, float);
@@ -900,14 +970,6 @@ public:
 	bool shoudLimit;
 	bool isLimiting;
 	Car *car;
-};
-
-class RaceEngineer {
-public:
-	Car *car;
-	float fuelPerLapEvaluated;
-
-	virtual void _dtor();
 };
 
 class WingOverrideDef {
