@@ -233,6 +233,8 @@ public:
 	ACSTD::wstring carModel;
 	IRigidBody *carBody;
 	Car *car;
+
+	auto step(float dt) { auto f = (void(__fastcall*)(CarColliderManager*, float))(NyaHookLib::mEXEBase + 0x2A3D50); return f(this, dt); }
 };
 
 class DynamicController;
@@ -1093,6 +1095,8 @@ public:
 	float avgSurfaceTemps[4];
 	float practicalTemps[4];
 	float splinePosition;
+
+	auto step(float dt) { auto f = (void(__fastcall*)(Telemetry*, float))(NyaHookLib::mEXEBase + 0x2BF5B0); return f(this, dt); }
 };
 
 class AutoBlip {
@@ -1175,6 +1179,8 @@ public:
 	bool drifting;
 	bool invalid;
 	float oldDamageZones[5];
+
+	auto step(float dt) { auto f = (void(__fastcall*)(DriftModeComponent*, float))(NyaHookLib::mEXEBase + 0x2BFF20); return f(this, dt); }
 };
 
 class PerformancePair {
@@ -1236,6 +1242,8 @@ public:
 	const float maxWaitTime;
 	float waitTime;
 	CarSetupState setupState;
+
+	auto step(float dt) { auto f = (void(__fastcall*)(SetupManager*, float))(NyaHookLib::mEXEBase + 0x28D090); return f(this, dt); }
 };
 
 class DRS {
@@ -1730,6 +1738,8 @@ public:
 	float normalizedPos;
 	float offset;
 	bool isOutsideLimits;
+
+	auto step(float dt) { auto f = (void(__fastcall*)(SplineLocator*, float))(NyaHookLib::mEXEBase + 0x2AB5C0); return f(this, dt); }
 };
 
 class PitStopTimings {
@@ -1873,5 +1883,8 @@ public:
 	virtual void _dtor();
 
 	auto pollControls(float dt) { auto f = (void(__fastcall*)(Car*, float))(NyaHookLib::mEXEBase + 0x274E70); return f(this, dt); }
+	auto updateColliderStatus(float dt) { auto f = (void(__fastcall*)(Car*, float))(NyaHookLib::mEXEBase + 0x276DF0); return f(this, dt); }
+	auto stepJumpStart(float dt) { auto f = (void(__fastcall*)(Car*, float))(NyaHookLib::mEXEBase + 0x276780); return f(this, dt); }
+	auto isInPits() { auto f = (bool(__fastcall*)(Car*))(NyaHookLib::mEXEBase + 0x274530); return f(this); }
 };
 static_assert(sizeof(Car) == 0x3EA0);
