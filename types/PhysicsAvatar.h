@@ -168,6 +168,8 @@ public:
 	std::vector<std::wstring> legalTyreList;
 	std::unique_ptr<ThreadPool> pool;
 	DynamicTempData dynamicTemp;
+
+	auto hasSessionStarted(float lag) { auto f = (bool(__fastcall*)(PhysicsEngine*, float))(NyaHookLib::mEXEBase + 0x263C70); return f(this, lag); }
 };
 
 class WindData {
