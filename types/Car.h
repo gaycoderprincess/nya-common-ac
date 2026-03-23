@@ -1604,6 +1604,9 @@ public:
 	float steerAngle;
 	SusDamageDef damageData;
 };
+static_assert(offsetof(Suspension, carBody) == 0x38);
+static_assert(offsetof(Suspension, hub) == 0x40);
+static_assert(offsetof(Suspension, car) == 0x58);
 
 class MLBall {
 public:
@@ -1632,6 +1635,8 @@ public:
 	SusDamageDef damageData;
 	vec3f baseCarSteerPosition;
 };
+static_assert(offsetof(SuspensionML, hub) == 0x38);
+static_assert(offsetof(SuspensionML, car) == 0x60);
 
 class AxleBall {
 public:
@@ -1649,6 +1654,7 @@ public:
 typedef JoypadButton RigidAxleSide;
 class SuspensionAxle : public ISuspension {
 public:
+	uint8_t _0[0x4];
 	RigidAxleSide side;
 	Damper damper;
 	Car *car;
@@ -1661,6 +1667,9 @@ public:
 	vec3f leafSpringK;
 	float attachRelativePos;
 };
+static_assert(offsetof(SuspensionAxle, side) == 0x38);
+static_assert(offsetof(SuspensionAxle, car) == 0x58);
+static_assert(offsetof(SuspensionAxle, axle) == 0x60);
 
 class SStrutSuspensionData {
 public:
@@ -1710,6 +1719,10 @@ public:
 	SusStrutDamageDef damageData;
 	Car *car;
 };
+static_assert(offsetof(SuspensionStrut, carBody) == 0x38);
+static_assert(offsetof(SuspensionStrut, hub) == 0x40);
+static_assert(offsetof(SuspensionStrut, strutBody) == 0x1B8);
+static_assert(offsetof(SuspensionStrut, car) == 0x1E0);
 
 class HeaveSpring {
 public:
