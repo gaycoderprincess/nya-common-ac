@@ -1961,6 +1961,7 @@ public:
 	auto updateColliderStatus(float dt) { auto f = (void(__fastcall*)(Car*, float))(NyaHookLib::mEXEBase + 0x276DF0); return f(this, dt); }
 	auto stepJumpStart(float dt) { auto f = (void(__fastcall*)(Car*, float))(NyaHookLib::mEXEBase + 0x276780); return f(this, dt); }
 	auto isInPits() { auto f = (bool(__fastcall*)(Car*))(NyaHookLib::mEXEBase + 0x274530); return f(this); }
+	auto reset() { auto f = (void(__fastcall*)(Car*))(NyaHookLib::mEXEBase + 0x2758E0); return f(this); }
 	auto onTyresStepCompleted() { auto f = (void(__fastcall*)(Car*))(NyaHookLib::mEXEBase + 0x274CD0); return f(this); }
 };
 static_assert(sizeof(Car) == 0x3EA0);
