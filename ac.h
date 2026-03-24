@@ -25,4 +25,5 @@ static_assert(sizeof(plane4f) == 0x10);
 #include "types/Camera.h"
 #include "types/PhysicsAvatar.h"
 #include "types/RaceManager.h"
+#include "types/ACCameraManager.h"
 #include "types/ACPlugin.h"
