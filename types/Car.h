@@ -161,7 +161,7 @@ public:
 	virtual vec3f *getLocalAngularVelocity(vec3f *result);
 	virtual vec3f *getLocalVelocity(vec3f *result);
 	virtual void setBoxColliderMask(unsigned __int64, unsigned int);
-	virtual unsigned __int64 addBoxCollider(const vec3f *, const vec3f *, unsigned int, unsigned int, unsigned int);
+	virtual unsigned __int64 addBoxCollider(const vec3f * pos, const vec3f * size, unsigned int category, unsigned int mask, unsigned int spaceId);
 	virtual void addSphereCollider(const vec3f *, const float, unsigned int, ISphereCollisionCallback *);
 	virtual void addLocalForce(const vec3f *);
 	virtual void addLocalTorque(const vec3f *);
