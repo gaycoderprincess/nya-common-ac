@@ -97,6 +97,7 @@ public:
 	bool isOver;
 	unsigned int leaderCompletedLaps;
 };
+static_assert(offsetof(Session, sessionType) == 0x0);
 
 class OnNewSessionEvent {
 public:
@@ -223,3 +224,4 @@ public:
 };
 static_assert(sizeof(Sim) == 0x2D0);
 static_assert(offsetof(Sim, carsNode) == 0x130);
+static_assert(offsetof(Sim, systemMessage) == 0x198);

@@ -279,6 +279,7 @@ public:
 	bool isOpenTrack;
 
 	auto step(float dt) { auto f = (void(__fastcall*)(TimeTransponder*, float))(NyaHookLib::mEXEBase + 0x2911F0); return f(this, dt); }
+	auto lap(bool valid) { auto f = (void(__fastcall*)(TimeTransponder*, bool))(NyaHookLib::mEXEBase + 0x290A50); return f(this, valid); }
 };
 
 class CarCollisionBox {
@@ -1963,5 +1964,7 @@ public:
 	auto isInPits() { auto f = (bool(__fastcall*)(Car*))(NyaHookLib::mEXEBase + 0x274530); return f(this); }
 	auto reset() { auto f = (void(__fastcall*)(Car*))(NyaHookLib::mEXEBase + 0x2758E0); return f(this); }
 	auto onTyresStepCompleted() { auto f = (void(__fastcall*)(Car*))(NyaHookLib::mEXEBase + 0x274CD0); return f(this); }
+	auto getSuspensionMatrix(mat44f* result, unsigned int index) { auto f = (mat44f*(__fastcall*)(Car*, mat44f*, unsigned int))(NyaHookLib::mEXEBase + 0x2724F0); return f(this, result, index); }
+	auto getTyreMatrix(mat44f* result, unsigned int index) { auto f = (mat44f*(__fastcall*)(Car*, mat44f*, unsigned int))(NyaHookLib::mEXEBase + 0x2726A0); return f(this, result, index); }
 };
 static_assert(sizeof(Car) == 0x3EA0);

@@ -474,6 +474,8 @@ public:
 	bool wasInPitlane;
 	float pitLaneEntryTime;
 	float pitLaneExitTime;
+
+	auto makeBodyMatrix(const mat44f *bm, mat44f *res) { auto f = (void(__fastcall*)(CarAvatar*, const mat44f*, mat44f*))(NyaHookLib::mEXEBase + 0xD8EC0); return f(this, bm, res); }
 };
 static_assert(sizeof(CarAvatar) == 0x12A8);
 static_assert(offsetof(CarAvatar, steerTransformHR) == 0x1C0);

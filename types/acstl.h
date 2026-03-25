@@ -63,6 +63,12 @@ namespace ACSTD {
 		unsigned __int64 _Mysize;
 		unsigned __int64 _Myres;
 
+		wstring() {
+			_Myres = 7;
+			_Mysize = 0;
+			_Bx._Buf[0] = 0;
+		}
+
 		auto c_str() {
 			if (_Myres < 8) {
 				return _Bx._Buf;
@@ -81,6 +87,14 @@ namespace ACSTD {
 		T *_Myptr;
 	};
 	static_assert(sizeof(unique_ptr<void>) == 0x8);
+
+	template<typename T>
+	class shared_ptr {
+	public:
+		T *_Ptr;
+		void *_Rep;
+	};
+	static_assert(sizeof(shared_ptr<void>) == 0x10);
 
 	template<typename T>
 	class vector {

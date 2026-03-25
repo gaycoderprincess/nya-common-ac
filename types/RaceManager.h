@@ -37,10 +37,12 @@ public:
 
 class MultiplayerStatus {
 public:
-	std::vector<bool> completedFlags;
+	uint8_t _0[0x20];
+	//ACSTD::vector<bool> completedFlags;
 };
+static_assert(sizeof(MultiplayerStatus) == 0x20);
 
-class RaceManager {
+class RaceManager : public GameObject {
 public:
 	Event<OnRaceInitEvent> evOnRaceInit;
 	Event<OnSessionEndEvent> evOnSessionEnd;
@@ -71,3 +73,7 @@ public:
 	//ACSTD::vector<ACSTD::vector<LeaderboardEntry>> leaderboardHistory;
 	//ACSTD::vector<OnSessionEndEvent> sessionHistoryList;
 };
+static_assert(offsetof(RaceManager, windSettings) == 0xB8);
+static_assert(offsetof(RaceManager, multiplayerStatus) == 0xC0);
+static_assert(offsetof(RaceManager, leaderLastLap) == 0xE0);
+static_assert(offsetof(RaceManager, currentSession) == 0xE8);
