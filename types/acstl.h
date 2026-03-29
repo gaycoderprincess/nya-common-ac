@@ -47,6 +47,7 @@ namespace ACSTD {
 				return _Bx._Ptr;
 			}
 		}
+		bool empty() { return _Mysize == 0; }
 		auto assign(const char* _Ptr, uint64_t _Count) { auto f = (string*(__fastcall*)(string*, const char*, uint64_t))(NyaHookLib::mEXEBase + 0x1CF80); return f(this, _Ptr, _Count); }
 	};
 	static_assert(sizeof(string) == 0x20);
@@ -77,6 +78,7 @@ namespace ACSTD {
 				return _Bx._Ptr;
 			}
 		}
+		bool empty() { return _Mysize == 0; }
 		auto assign(const wchar_t* _Ptr, uint64_t _Count) { auto f = (wstring*(__fastcall*)(wstring*, const wchar_t*, uint64_t))(NyaHookLib::mEXEBase + 0x1D250); return f(this, _Ptr, _Count); }
 	};
 	static_assert(sizeof(wstring) == 0x20);
