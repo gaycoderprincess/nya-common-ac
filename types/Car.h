@@ -1280,6 +1280,10 @@ public:
 	ACSTD::function<void __cdecl(SetupItem *)> onValueChanged;
 	float labelMultiplier;
 
+	SetupItem() {}
+	SetupItem(ACSTD::wstring *aname, float *aconnectedFloat, ACSTD::wstring *units, bool isAttached, float multiplier, float labelMult) { auto f = (void(__fastcall*)(SetupItem*, ACSTD::wstring*, float*, ACSTD::wstring*, bool, float, float))(NyaHookLib::mEXEBase + 0x2CB170); f(this, aname, aconnectedFloat, units, isAttached, multiplier, labelMult); }
+	SetupItem(const SetupItem* __that) { auto f = (void(__fastcall*)(SetupItem*, const SetupItem*))(NyaHookLib::mEXEBase + 0x288C90); f(this, __that); }
+
 	virtual void _dtor(char a2) {}
 };
 static_assert(sizeof(SetupItem) == 0x88);

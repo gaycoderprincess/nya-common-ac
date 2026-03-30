@@ -158,7 +158,7 @@ namespace ACSTD {
 			_Myend = &newData[num];
 		}
 
-		void push_back(T value) {
+		void push_back(const T& value) {
 			if (_Mylast >= _Myend) {
 				reserve(capacity() == 0 ? 1 : capacity()*2);
 			}
