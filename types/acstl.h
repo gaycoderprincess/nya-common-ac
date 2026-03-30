@@ -105,6 +105,12 @@ namespace ACSTD {
 		T *_Mylast;
 		T *_Myend;
 
+		vector() {
+			_Myfirst = nullptr;
+			_Mylast = nullptr;
+			_Myend = nullptr;
+		}
+
 		T& operator[](int i) { return _Myfirst[i]; }
 
 		auto begin() {
