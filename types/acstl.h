@@ -132,6 +132,39 @@ namespace ACSTD {
 			if (size() < i) return _Myfirst[i];
 			__debugbreak();
 		}
+
+		void clear() { _Mylast = _Myfirst; }
+
+		// had to be implemented manually
+		void reserve(size_t num) {
+			if (size() >= num) return;
+
+			auto newData = (T*)malloc(sizeof(T)*num);
+			memset(newData, 0, sizeof(T)*num);
+
+			// copy new data
+			if (!empty()) {
+				memcpy(newData, _Myfirst, sizeof(T)*size());
+			}
+
+			// free old data
+			if (_Myfirst) {
+				free(_Myfirst);
+			}
+
+			auto oldSize = size();
+			_Myfirst = newData;
+			_Mylast = &newData[oldSize];
+			_Myend = &newData[num];
+		}
+
+		void push_back(T value) {
+			if (_Mylast >= _Myend) {
+				reserve(capacity() == 0 ? 1 : capacity()*2);
+			}
+			*_Mylast = value;
+			_Mylast++;
+		}
 	};
 	static_assert(sizeof(vector<void*>) == 0x18);
 

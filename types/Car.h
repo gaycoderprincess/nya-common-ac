@@ -1276,11 +1276,16 @@ public:
 	float multiplier;
 	float newValue;
 	bool attached;
+	uint8_t _59[0x7];
 	ACSTD::function<void __cdecl(SetupItem *)> onValueChanged;
 	float labelMultiplier;
 
-	virtual void _dtor();
+	virtual void _dtor(char a2) {}
 };
+static_assert(sizeof(SetupItem) == 0x88);
+static_assert(offsetof(SetupItem, multiplier) == 0x50);
+static_assert(offsetof(SetupItem, attached) == 0x58);
+static_assert(offsetof(SetupItem, onValueChanged) == 0x60);
 
 enum class DRWWingConnectionMode {
 	UseEffect = 0x0,
@@ -1308,6 +1313,7 @@ public:
 
 	auto step(float dt) { auto f = (void(__fastcall*)(SetupManager*, float))(NyaHookLib::mEXEBase + 0x28D090); return f(this, dt); }
 };
+static_assert(offsetof(SetupManager, items) == 0x0);
 
 class DRS {
 public:
