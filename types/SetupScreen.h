@@ -13,7 +13,6 @@ enum class eFontAlign {
 namespace ksgui {
 	class ActiveButton;
 	class Control;
-	class Label;
 	class Spinner;
 
 	class ksRect {
@@ -62,6 +61,11 @@ namespace ksgui {
 		GLRenderer *controlGLR;
 		ksgui::ksRect rectBase;
 
+		auto setVisible(bool value) {
+			auto f = (void(__fastcall*)(Control*, bool))(NyaHookLib::mEXEBase + 0x2451A0);
+			return f(this, value);
+		}
+
 		virtual void _dtor();
 		virtual bool hitTest(int, int);
 		virtual void addControl(ksgui::Control *);
@@ -83,6 +87,11 @@ namespace ksgui {
 		virtual const ACSTD::wstring *getText();
 		virtual void scaleByMult(float);
 		virtual void scaleByMult();
+	};
+
+	class Label : public Control {
+	public:
+		unsigned int maxNumberOfCharDisplayed;
 	};
 }
 
@@ -143,6 +152,46 @@ public:
 	}
 };
 static_assert(offsetof(SetupTab, items) == 0x188);
+
+struct LastMousePosition {
+	int x;
+	int y;
+};
+
+struct OnCellSelected {
+	TabBar *tabBar;
+	unsigned int oldIndex;
+	unsigned int newIndex;
+};
+
+class TabBar : public ksgui::Control {
+public:
+	Event<OnCellSelected> evOnCellSelected;
+	float tabBarX;
+	unsigned int topIndex;
+	unsigned int rollOnIndex;
+	ksgui::Control *leftScroller;
+	ksgui::Control *rightScroller;
+	vec4f selectedColor;
+	vec4f unselectedColor;
+	vec4f rolloverColor;
+	std::vector<ksgui::Label *> elements;
+	LastMousePosition mouse;
+};
+
+class CarInfoFront;
+class CarInfoRear;
+class SetupInformation : public ksgui::Control {
+public:
+	Sim *sim;
+	Texture carView;
+	CarInfoFront *LF;
+	CarInfoFront *RF;
+	CarInfoRear *LR;
+	CarInfoRear *RR;
+	ksgui::Label *frontHeight;
+	ksgui::Label *rearHeight;
+};
 
 class SetupScreen : public ksgui::Control {
 public:
