@@ -42,6 +42,7 @@ public:
 };
 static_assert(sizeof(MultiplayerStatus) == 0x20);
 
+class Font;
 class RaceManager : public GameObject {
 public:
 	Event<OnRaceInitEvent> evOnRaceInit;
@@ -65,7 +66,7 @@ public:
 	Trigger debugTrigger;
 	Sim *sim;
 	RaceTimingServices *raceTimingServices;
-	//ACSTD::shared_ptr<Font> font;
+	ACSTD::shared_ptr<Font> font;
 	//ACSTD::vector<Session> sessions;
 	//ACSTD::vector<RealTimeCarDesc> carsRealTimePosition;
 	//ACSTD::vector<RaceStatusCarDesc> carsRaceStatus;

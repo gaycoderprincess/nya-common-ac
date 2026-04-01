@@ -136,10 +136,26 @@ public:
 	float accumulatorLimit;
 };
 
+enum class PixelFormat {
+	eUnknownFormat = 0x0,
+	eRGBA8 = 0x1,
+	eRGBA32 = 0x2,
+	eBC3Unorm = 0x3,
+};
+
 class Texture {
 public:
 	void *kid;
 	ACSTD::wstring fileName;
+
+	Texture(uint8_t* buffer, uint32_t size) {
+		auto f = (void(__fastcall*)(Texture*, uint8_t*, uint32_t))(NyaHookLib::mEXEBase + 0x1FDE80);
+		f(this, buffer, size);
+	}
+	Texture(uint8_t* buffer, uint32_t width, uint32_t height, PixelFormat aFormat) {
+		auto f = (void(__fastcall*)(Texture*, uint8_t*, uint32_t, uint32_t, PixelFormat))(NyaHookLib::mEXEBase + 0x1FDEC0);
+		f(this, buffer, width, height, aFormat);
+	}
 };
 
 template<typename T>
