@@ -45,7 +45,11 @@ class IEventTrigger;
 class ICarPhysicsStateProvider;
 class CarAnimations;
 
-typedef float Speed;
+struct Speed {
+	float f;
+
+	static inline auto& useMPH = *(bool*)(NyaHookLib::mEXEBase + 0x204C70);
+};
 
 class SurfaceDef {
 public:
