@@ -48,7 +48,7 @@ class CarAnimations;
 struct Speed {
 	float f;
 
-	static inline auto& useMPH = *(bool*)(NyaHookLib::mEXEBase + 0x204C70);
+	static inline auto& useMPH = *(bool*)(NyaHookLib::mEXEBase + 0x155A5AE);
 };
 
 class SurfaceDef {
