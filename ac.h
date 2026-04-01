@@ -243,6 +243,11 @@ public:
 		return f(this, slot, tex);
 	}
 
+	auto setCullMode(CullMode mode) {
+		auto f = (void(__fastcall*)(GraphicsManager*, CullMode))(NyaHookLib::mEXEBase + 0x204510);
+		return f(this, mode);
+	}
+
 	virtual void _dtor();
 };
 static_assert(offsetof(GraphicsManager, videoSettings) == 0x10);
