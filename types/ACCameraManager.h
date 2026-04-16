@@ -81,3 +81,46 @@ public:
 	Event<bool> evOnFadeInFinished;
 	PersistanceCameraModeDef persistanceCameraMode;
 };
+static_assert(offsetof(ACCameraManager, cameraDrivable) == 0xC0);
+
+class ChaseCamData {
+public:
+	float distance;
+	float height;
+	float pitchRAD;
+};
+
+class DrivableCameraDef {
+public:
+	vec3f bumperCameraPos;
+	float bumperCameraPitch;
+	vec3f bonnetCameraPos;
+	float bonnetCameraPitch;
+	float chaseCameraPitch;
+	vec3f dashCameraPos;
+	float rotationOffset;
+	bool bumperExternalSound;
+	bool bonnetExternalSound;
+};
+
+class CameraDrivableManager : public GameObject {
+public:
+	DrivableCamera currentMode;
+	ChaseCamData chaseCamData[2];
+	Sim *sim;
+	CameraForward *camera;
+	std::vector<DrivableCameraDef> drivableCameraPositions;
+	mat44f cameraMatrix;
+	vec3f currentOffset;
+	std::vector<vec3f> lookBackPoints;
+	bool isWorldAligned;
+	float rotationChase;
+	float rotationDegrees;
+	float rotationSpeed;
+	float rotationAnimation;
+	float accGXMul;
+	float accGZMul;
+	float chaseCamFilter;
+	int chaseIndex;
+};
+static_assert(offsetof(CameraDrivableManager, drivableCameraPositions) == 0x88);
