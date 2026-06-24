@@ -49,6 +49,7 @@ public:
 	bool isAutoclutchNeeded;
 	bool useFakeUndersteerFF;
 	bool keyboardEnabled;
+	uint8_t _14[0x4];
 
 	virtual void _dtor();
 	virtual void acquireControls(CarControls *, float, CarControlsInput *);
@@ -63,6 +64,7 @@ public:
 	virtual void setEngineRPM(float, float, float);
 	virtual bool shouldDelete();
 };
+static_assert(sizeof(ICarControlsProvider) == 0x18);
 
 class RaceEngineer {
 public:

@@ -35,6 +35,7 @@ public:
 #include "types/GhostCar.h"
 #include "types/TrackAvatar.h"
 #include "types/SetupScreen.h"
+#include "types/GraphicsManager.h"
 #include "types/ACPlugin.h"
 
 enum class SystemMessageType {
@@ -59,197 +60,248 @@ public:
 	auto addMessage(const ACSTD::wstring *imessage, const ACSTD::wstring *description, SystemMessageType type) { auto f = (void(__fastcall*)(SystemMessage*, const ACSTD::wstring*, const ACSTD::wstring*, SystemMessageType))(NyaHookLib::mEXEBase + 0x1B61C0); return f(this, imessage, description, type); }
 };
 
-enum class eGLPrimitiveType {
-	eLines = 0x0,
-	eLinesStrip = 0x1,
-	eTriangles = 0x2,
-	eQuads = 0x3,
+class AIBrakePointData {
+public:
+	float targetSpeed;
+	float targetNormalized;
+	float apexNormalized;
+	bool wasObstacle;
+	float lateralOffset;
+	float speedDiff;
 };
 
-class MeshVertex {
+class AISinOffsetData {
 public:
-	vec3f pos;
+	double phase;
+	double phaseSpeed;
+	float steerOffset;
+	float lastFinalOffset;
+};
+
+enum class SplineSelection {
+	FastLane = 0x0,
+	Pits = 0x1,
+};
+
+class HumanizeData {
+public:
+	double minTimeBetweenMistakesMS;
+	double timeBetweenMistakesMS;
+	float brakeMistakeTime;
+	float tractionMistake;
+	double nextBrakeMistake;
+	double nextTractionMistake;
+	float tractioMistakeSeverity;
+};
+
+class AITurboStrategy {
+public:
+	bool active;
+	int qualifyHotLaps;
+};
+
+class AIKersArea {
+public:
+	float start;
+	float end;
+	float length;
+	float time;
+};
+
+class AISplinePayload {
+public:
+	float speedMS;
+	float radius;
+	float sides[2];
+	float camber;
+	float direction;
 	vec3f normal;
-	vec2f texCoord;
-	vec3f tangent;
+	vec3f forwardVector;
+	float length;
+	float gas;
+	float brake;
+	float grade;
+	float grip;
+	float distFromCorner;
+	float distFromNextCorner;
+	bool isPitlane;
+	float compression;
 };
 
-template<typename T>
-class VertexBuffer;
-
-class IndexBuffer;
-class GLRenderer {
+class AIOpponentData {
 public:
-	ACSTD::vector<ACSTD::pair<int,void *>> buffers;
-	int currentIndex;
-	GraphicsManager *graphics;
-	eGLPrimitiveType primitive;
-	vec4f color;
-	bool useTexture;
-	vec2f texCoord;
-	Shader *shader;
-	IndexBuffer *fullQuadIB;
-	VertexBuffer<MeshVertex> *fullQuadVB;
-	Shader *glShader;
-	Shader *glShaderTex;
-	unsigned int tempCounter;
-	MeshVertex tempVertices[3];
-	MeshVertex *tempBuffer;
-	unsigned int maxVertices;
-
-	auto begin(eGLPrimitiveType type, Shader *ishader) {
-		auto f = (void(__fastcall*)(GLRenderer*, eGLPrimitiveType, Shader*))(NyaHookLib::mEXEBase + 0x1FE800);
-		return f(this, type, ishader);
-	}
-	auto end() {
-		auto f = (void(__fastcall*)(GLRenderer*))(NyaHookLib::mEXEBase + 0x1FE870);
-		return f(this);
-	}
-	auto color4f(float r, float g, float b, float a) {
-		auto f = (void(__fastcall*)(GLRenderer*, float, float, float, float))(NyaHookLib::mEXEBase + 0x1FE850);
-		return f(this, r, g, b, a);
-	}
-	auto vertex3f(float x, float y, float z) {
-		auto f = (void(__fastcall*)(GLRenderer*, float, float, float))(NyaHookLib::mEXEBase + 0x1FFC20);
-		return f(this, x, y, z);
-	}
-	auto quad(float x, float y, float width, float height, bool textured, Shader* shader) {
-		auto f = (void(__fastcall*)(GLRenderer*, float, float, float, float, bool, Shader*))(NyaHookLib::mEXEBase + 0x1FF420);
-		return f(this, x, y, width, height, textured, shader);
-	}
-
-	virtual void _dtor();
-};
-static_assert(offsetof(GLRenderer, useTexture) == 0x44);
-static_assert(offsetof(GLRenderer, texCoord) == 0x48);
-static_assert(offsetof(GLRenderer, maxVertices) == 0x108);
-
-enum class DepthMode {
-	eDepthNormal = 0x0,
-	eDepthNoWrite = 0x1,
-	eDepthOff = 0x2,
-	eDepthLessEqual = 0x3,
+	float dist_front;
+	float dist_back;
+	float lateral_offset;
+	bool isEngaged;
+	float speedMS;
+	float tti;
+	float spaceLeft;
+	float spaceRight;
+	vec3f relPos;
+	float relAngle;
+	bool isBlocker;
+	float isUnderAttack;
+	float relXSpeed;
+	float distToPass;
+	Car *car;
+	bool isOutsideTrack;
 };
 
-enum class BlendMode {
-	eOpaque = 0x0,
-	eAlphaBlend = 0x1,
-	eAlphaToCoverage = 0x2,
-};
-
-enum class CullMode {
-	eCullFront = 0x0,
-	eCullBack = 0x1,
-	eCullNone = 0x2,
-	eCullBiased = 0x3,
-	eCullWireFrame = 0x4,
-	eCullFrontNoMS = 0x5,
-};
-
-class RenderState {
+class AIBrakeObstacle {
 public:
-	void *textures[32];
-	CullMode cullMode;
-	BlendMode blendMode;
-	DepthMode depthState;
-	Material *material;
-	mat44f projectionMatrix;
-	mat44f viewMatrix;
-	mat44f worldMatrix;
-	Shader *shader;
-	void *currentRenderTarget;
-	void *currentDepth;
-	bool overrideNoMS;
+	float distance;
+	float speedMS;
+	AIOpponentData *odata;
 };
 
-class RenderStats {
+struct AIBrakeProfilerItem {
+	float npos;
+	float speed;
+	float accx;
+	float accz;
+};
+
+class AIBrakeProfiler {
 public:
-	int dipCalls;
-	int sceneDipCalls;
-	int triangles;
-	int sceneTriangles;
-	bool isInMainRenderPass;
+	bool isEnabled;
+	ACSTD::vector<AIBrakeProfilerItem> items;
+	bool lastRecKeyStatus;
+	float lastProfiledNPos;
 };
 
-class LightingSettings {
+class TyreCompoundStrategy {
 public:
-	vec3f lightDirection;
-	vec3f lightColor;
-	vec3f horizonLow;
-	vec3f horizonHigh;
-	vec3f skyLow;
-	vec3f skyHigh;
-	vec3f sunLow;
-	vec3f sunHigh;
-	float angle;
-	float headingAngle;
-	float pitchAngle;
-	vec3f ambientLow;
-	vec3f ambientHigh;
-	vec3f fogColor;
-	float fogLinear;
-	float fogBlend;
-	float cloudCover;
-	float cloudCutoff;
-	float cloudColor;
-	float cloudOffset;
-	float saturation;
-	float gameTime;
-	float sunAngleGamma;
+	float maxKm;
 };
 
-class RendererFlags {
+class AIVariation {
 public:
-	int maxFrameLatency;
-	float mipLodBias;
+	float blend;
+	float startPush;
+	float targetPush;
+	float accum;
+	float currentPush;
+	float variationTime;
 };
 
-struct OnWindowResize {
-	int width;
-	int height;
-};
-
-class ResourceStore;
-class GPUProfiler;
-class PvsProcessor;
-class GraphicsManager {
+class AIWingSetup {
 public:
-	bool useCustomSunDirection;
-	float exposureMultiplier;
-	VideoSettings videoSettings;
-	RenderStats stats;
-	LightingSettings lightingSettings;
-	RendererFlags renderFlags;
-	bool suspendViewportUpdateOnSetRenderTarget;
-	GPUProfiler *gpuProfiler;
-	PvsProcessor *pvsProcessor;
-	CubeMap *currentCubeMap;
-	Event<OnWindowResize> evWindowResize;
-	Event<OnWindowResize> evWindowPreResize;
-	ACSTD::unique_ptr<ResourceStore> resourceStore;
-	RenderState state;
-	GLRenderer *gl;
-	vec3f customSunDirection;
-	ACSTD::vector<std::wstring> errorStrings;
-	ACSTD::vector<GLRenderer *> glRenderers;
-	int multiSampleQuality;
-	//SamplerStates samplerStates;
-	//SystemCBuffers sysBuffers;
-	//ACSTD::map<std::wstring,CBuffer *> cBuffersMap;
-	//ShaderManager shaderManager;
-
-	auto setTexture(int slot, const Texture *tex) {
-		auto f = (void(__fastcall*)(GraphicsManager*, int, const Texture*))(NyaHookLib::mEXEBase + 0x204C70);
-		return f(this, slot, tex);
-	}
-
-	auto setCullMode(CullMode mode) {
-		auto f = (void(__fastcall*)(GraphicsManager*, CullMode))(NyaHookLib::mEXEBase + 0x204510);
-		return f(this, mode);
-	}
-
-	virtual void _dtor();
+	int index;
+	SetupItem *item;
+	float minValue;
+	float maxValue;
 };
-static_assert(offsetof(GraphicsManager, videoSettings) == 0x10);
-static_assert(offsetof(GraphicsManager, gpuProfiler) == 0x138);
-static_assert(offsetof(GraphicsManager, gl) == 0x380);
+
+class AISetup {
+public:
+	SetupItem *finalRatio;
+	ACSTD::vector<float> ratios;
+	double lastSetupChangeTime;
+	ACSTD::vector<AIWingSetup> wings;
+};
+
+class AIDriver : public ICarControlsProvider {
+public:
+	float STRAIGHT_RADIUS;
+	float aggression;
+	float steerMinLookahead;
+	float gasBrakeLookahead;
+	float basePush;
+	AIBrakePointData brakePoint;
+	vec3f steerTarget;
+	PIDController pidSteer;
+	float steerGain;
+	SplineSelection splineSelection;
+	float brakeHintBase;
+	float brakeHintLive;
+	float changeUpRPM;
+	float changeDnPerc;
+	bool requestPitStop;
+	float nextCarModifier;
+	HumanizeData humanize;
+	float distToNextCorner;
+	float aeroHint;
+	float tyresHint;
+	float understeerFactor;
+	float prjDNRPM;
+	double timeToStart;
+	float kerbModifier;
+	float outsideOffset;
+	float mongolinoMaxGas;
+	float genome[20];
+	bool useMagicForces;
+	float understeerHint;
+	float liveOffset;
+	float offsetDistFromCorner;
+	float ultraGrip;
+	double lastGearUPChangeTime;
+	double lastGearDNChangeTime;
+	bool isChangingUp;
+	bool isRetiring;
+	AISinOffsetData sinOffsetData;
+	double reactionTime;
+	float oldSteer;
+	float targetSpeed;
+	unsigned int startTime;
+	double avgSpeed;
+	float requestedLane;
+	float dynamicPush;
+	int stepCount;
+	int freqCounter;
+	Car *car;
+	bool isReactingSlow;
+	AITurboStrategy turbo;
+	RaceEngineer engineer;
+	float autoBrakeAdjust;
+	bool isSteeringToPit;
+	float dangerPush;
+	float wingVariation;
+	ACSTD::vector<AIKersArea> kersAreas;
+	float kersAccum;
+	float tyreStopMinValue;
+	float tyreStopMinValueVKM[4];
+	AISplineRecorder *aiSplineRecorder;
+	AISpline *currentSpline;
+	float gasRequest;
+	float brakeRequest;
+	float steerRequest;
+	bool pitLaneStartFlag;
+	float currentOffset;
+	float desiredOffset;
+	AISplinePayload currentPayload;
+	int lapsToComplete;
+	double timeToStartRevvingAtStart;
+	bool raceStartFlag;
+	int runLapCounter;
+	ACSTD::vector<AIOpponentData> opponentData;
+	ACSTD::vector<AIBrakeObstacle> brakeObstacles;
+	float gasApexDelay;
+	int preferredCompound;
+	bool hasChoosenTyres;
+	AIBrakeProfiler brakeProfiler;
+	float accidentStopCounter;
+	ACSTD::map<ACSTD::wstring,TyreCompoundStrategy> tyreStrategies;
+	SessionInfo currentSessionInfo;
+	float locNpos;
+	int currentPitLineIndex;
+	float splineTargetSpeed;
+	float oversteerTCMult;
+	float minForwardSides[2];
+	bool isEngaged;
+	AIVariation aiVariation;
+	float engagedPush;
+	bool useAbs;
+	AISetup aiSetup;
+	double lastDRSActivationTime;
+	float smoothLoads[4];
+	float aggressionHint;
+	float targetSteerFinal;
+};
+static_assert(sizeof(AIDriver) == 0x3E8);
+static_assert(offsetof(AIDriver, aggression) == 0x1C);
+static_assert(offsetof(AIDriver, nextCarModifier) == 0x80);
+static_assert(offsetof(AIDriver, isRetiring) == 0x159);
+static_assert(offsetof(AIDriver, wingVariation) == 0x1E4);
+static_assert(offsetof(AIDriver, opponentData) == 0x2A8);
+static_assert(offsetof(AIDriver, splineTargetSpeed) == 0x350);
